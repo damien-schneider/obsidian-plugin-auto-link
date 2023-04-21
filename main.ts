@@ -8,7 +8,7 @@ import {
 	PluginSettingTab,
 	Setting,
 } from "obsidian";
-
+import { MainModal } from "./modals/mainModal";
 import SampleSettingTab from "./mainClasses/settings";
 
 // Remember to rename these classes and interfaces!
@@ -30,10 +30,13 @@ export default class MyPlugin extends Plugin {
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon(
 			"dice",
-			"Sample Plugin",
+			"Auto Link",
 			(evt: MouseEvent) => {
 				// Called when the user clicks the icon.
 				new Notice("Petit tetete test");
+				new MainModal(this.app, (result) => {
+					new Notice(`Hello, ${result}!`);
+				}).open();
 			}
 		);
 		// Perform additional things with the ribbon
