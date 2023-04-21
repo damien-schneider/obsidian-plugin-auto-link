@@ -1,7 +1,7 @@
 {
 	"name": "obsidian-sample-plugin",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "This plugin create automatically links to other notes in your vault. It has a few options to configure the behavior. Enjoy !",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
