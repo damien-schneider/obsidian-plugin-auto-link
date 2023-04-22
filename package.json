@@ -20,5 +20,16 @@
 		"obsidian": "latest",
 		"tslib": "2.4.0",
 		"typescript": "4.7.4"
+	},
+	"dependencies": {
+		"@types/jsdom": "^21.1.1",
+		"@types/marked": "^4.0.8",
+		"@types/natural": "^5.1.2",
+		"jsdom": "^21.1.1",
+		"marked": "^4.3.0",
+		"natural": "^6.2.0",
+		"punycode": "^2.3.0",
+		"stopwords-en": "^0.3.0",
+		"stopwords-fr": "^0.3.0"
 	}
 }
