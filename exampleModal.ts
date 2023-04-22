@@ -1,6 +1,6 @@
 import { App, Modal, Setting } from "obsidian";
 
-export class MainModal extends Modal {
+export class ExampleModal extends Modal {
 	result: string;
 	onSubmit: (result: string) => void;
 
@@ -12,22 +12,17 @@ export class MainModal extends Modal {
 	onOpen() {
 		const { contentEl } = this;
 
-		contentEl.createEl("h1", { text: "Auto Link" });
+		contentEl.createEl("h1", { text: "What's your name?" });
 
-		new Setting(contentEl).setName("Name").addText((text: any) =>
-			text.onChange((value: any) => {
+		new Setting(contentEl).setName("Name").addText((text) =>
+			text.onChange((value) => {
 				this.result = value;
 			})
 		);
 
-		// Wrap the button in a div element
-		const buttonWrapper = contentEl.createEl("div", {
-			attr: { style: "display: flex; justify-content: center;" },
-		});
-
-		new Setting(buttonWrapper).addButton((btn: any) =>
+		new Setting(contentEl).addButton((btn) =>
 			btn
-				.setButtonText("Start Vault Analysis")
+				.setButtonText("Submit")
 				.setCta()
 				.onClick(() => {
 					this.close();
