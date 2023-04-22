@@ -8,7 +8,7 @@ import {
 	PluginSettingTab,
 	Setting,
 } from "obsidian";
-import { MainModal } from "./modals/mainModal";
+import { MainModal } from "./modals/mainMenu";
 import SampleSettingTab from "./mainClasses/settings";
 
 // Remember to rename these classes and interfaces!
@@ -35,7 +35,7 @@ export default class MyPlugin extends Plugin {
 				// Called when the user clicks the icon.
 				new Notice("Petit tetete test");
 				new MainModal(this.app, (result) => {
-					new Notice(`Hello, ${result}!`);
+					new Notice(`Helldfadazdazdo, ${result}!`);
 				}).open();
 			}
 		);
