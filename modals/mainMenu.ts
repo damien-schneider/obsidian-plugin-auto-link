@@ -2,7 +2,6 @@ import { App, Modal, Setting, Notice, DataAdapter } from "obsidian";
 import { extractKeywords } from "../functions/extractKeywords.js";
 import * as path from "path";
 import { addDoubleBrackets } from "../functions/addDoubleBrackets.js";
-import { ResultModal } from "./resultModal.js";
 
 export class MainModal extends Modal {
 	result: string;
@@ -15,11 +14,15 @@ export class MainModal extends Modal {
 
 	onOpen() {
 		let { contentEl } = this;
-		let { containerEl } = this;
-		const vaultPath = (this.app.vault.adapter as any).basePath;
-		let extractedKeywords: string[] = [];
 
-		contentEl.createEl("h1", { text: "Auto Link" });
+		const vaultPath = (this.app.vault.adapter as any).basePath;
+
+		contentEl.createEl("h1", {
+			text: "Auto Link",
+			attr: { style: "text-align: center;" },
+		});
+		contentEl.createEl("br", {});
+		contentEl.createEl("h2", { text: "Parameters :" });
 
 		new Setting(contentEl).addButton((btn: any) =>
 			btn
@@ -34,87 +37,109 @@ export class MainModal extends Modal {
 					for (let i = 0; i < files.length; i++) {
 						filePath[i] = path.resolve(vaultPath, files[i].path);
 					}
+
 					const keywords = await extractKeywords(filePath);
-					extractedKeywords = keywords;
 					new Notice(`Here are the keywords: ${keywords}!`);
 				})
 		);
 
-		// containerEl.createEl("h1", { text: "Heading 1" });
-		const book = containerEl.createEl("div");
-		book.createEl("div", { text: "How to Take Smart Notes" });
-		book.createEl("small", { text: "Sönke Ahrens" });
+		// Add a div to make the slider take all the width
+		let sliderValue = 3;
+		// TODO : Make the slider taking the all width
+		new Setting(contentEl)
+			.setName(
+				`Keywords minimum occurence to be displayed in the list : `
+			)
+			.addSlider((slider: any) =>
+				slider
+					.setLimits(1, 10, 1)
+					.setDynamicTooltip()
+					.setValue(sliderValue)
+					.onChange(async (value: any) => {
+						new Notice(`The slider value is ${value}`);
+						sliderValue = value;
+					})
+			);
 
-		//Function which add <p></p> for each keywords found in the files
-		function addPtag(contentEl: HTMLElement, keywords: string[]) {
-			for (let i = 0; i < keywords.length; i++) {
-				const p = contentEl.createEl("p", {
-					text: `Keyword ${i} : ${keywords[i]}`,
-				});
-				contentEl.appendChild(p);
-			}
+		//Fucnction to check if the checkbox with the name "Option 1" is checked (return true or false)
+		//TODO : Find a better way to see what is checked
+		function isChecked(name: string) {
+			const checkbox = document.querySelector(
+				`input[name='${name}']`
+			) as HTMLInputElement;
+			return checkbox.checked;
 		}
-		new Setting(contentEl).addButton((btn: any) =>
-			btn
-				.setButtonText("Add new p tag")
-				.setCta()
-				.onClick(() => {
-					// Create a new <p> element with content "Coucou"
-					const p = contentEl.createEl("p", {
-						text: "Coucou",
-					});
-					// Append the new <p> element to the modal's content
-					contentEl.appendChild(p);
-				})
-		);
 
-		new Setting(contentEl).addButton((btn: any) =>
-			btn
-				.setButtonText("Test")
-				.setCta()
-				.onClick(async () => {
-					const files = ["file1.md", "file2.md", "file3.md"];
-					const commonWords = await extractKeywords(files);
-					await addDoubleBrackets(files, commonWords);
-				})
-		);
-
-		new Setting(contentEl).setName("Name").addText((text: any) =>
-			text.onChange((value: any) => {
-				this.result = value;
-			})
-		);
-
-		const checkboxWrapper = contentEl.createDiv({
-			cls: "checkbox-wrapper",
-		});
-		new Setting(checkboxWrapper)
-			.setName("Option 1")
-			.addToggle((toggle: any) => {
-				toggle.onChange((value: boolean) => {
-					// Handle the checkbox value change here
-				});
-			});
-
-		new Setting(checkboxWrapper)
-			.setName("Option 2")
-			.addToggle((toggle: any) => {
-				toggle.onChange((value: boolean) => {
-					// Handle the checkbox value change here
-				});
-			});
-		// Wrap the button in a div element
-		const buttonWrapper = contentEl.createEl("div", {
+		const centerWithDiv = contentEl.createEl("div", {
 			attr: { style: "display: flex; justify-content: center;" },
 		});
-
-		new Setting(buttonWrapper).addButton((btn: any) =>
+		new Setting(centerWithDiv).addButton((btn: any) =>
 			btn
 				.setButtonText("Start Vault Analysis")
 				.setCta()
-				.onClick(() => {
-					this.close();
-					this.onSubmit(this.result);
+				.onClick(async () => {
+					new Notice(`${sliderValue}`);
+					new Notice("Starting Vault Analysis");
+
+					// Get the list of all the files in the vault
+					const files = this.app.vault.getMarkdownFiles();
+					let filePaths = [];
+					for (let i = 0; i < files.length; i++) {
+						filePaths[i] = path.resolve(vaultPath, files[i].path);
+					}
+					let extractedKeywords: {
+						[word: string]: { count: number; paths: string[] };
+					} = {};
+					extractedKeywords = await extractKeywords(filePaths);
+
+					// Display the results
+					contentEl.append(
+						contentEl.createEl("h1", { text: "Results" })
+					);
+					//TODO : Remove all the "any" types
+					// Add a master checkbox to toggle all keyword checkboxes
+					const toggleRefs: any = [];
+					const selectedKeywords: any = {};
+
+					new Setting(contentEl)
+						.setName("Toggle all keywords")
+						.addToggle((masterToggle) => {
+							masterToggle.onChange((checked) => {
+								toggleRefs.forEach((toggleObj: any) => {
+									toggleObj.toggle.setValue(checked);
+									toggleObj.onChangeFn(checked);
+								});
+							});
+						});
+
+					// Get the array of keyword keys
+					const keywordKeys = Object.keys(extractedKeywords);
+
+					// Iterate through the keyword keys array and add checkboxes with the corresponding keywords
+					for (let i = 0; i < keywordKeys.length; i++) {
+						const keyword = keywordKeys[i];
+						selectedKeywords[keyword] = false;
+
+						new Setting(contentEl)
+							.setName(keyword)
+							.addToggle((toggle) => {
+								const onChangeFn = (checked: any) => {
+									selectedKeywords[keyword] = checked;
+									console.log(
+										`Selected keywords: ${getSelectedKeywords()}`
+									);
+								};
+
+								toggle.onChange(onChangeFn);
+								toggleRefs.push({ toggle, onChangeFn });
+							});
+					}
+
+					function getSelectedKeywords() {
+						return Object.keys(selectedKeywords).filter(
+							(keyword) => selectedKeywords[keyword]
+						);
+					}
 				})
 		);
 	}
