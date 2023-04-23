@@ -1,6 +1,9 @@
 import { App, Modal, Setting, Notice, DataAdapter } from "obsidian";
 import { extractKeywords } from "../functions/extractKeywords.js";
 import * as path from "path";
+import { addDoubleBrackets } from "../functions/addDoubleBrackets.js";
+import { ResultModal } from "./resultModal.js";
+
 export class MainModal extends Modal {
 	result: string;
 	onSubmit: (result: string) => void;
@@ -10,40 +13,13 @@ export class MainModal extends Modal {
 		this.onSubmit = onSubmit;
 	}
 
-	async averageFileLength(): Promise<number> {
-		const { vault } = this.app;
-
-		const fileContents: string[] = await Promise.all(
-			vault.getMarkdownFiles().map((file) => vault.cachedRead(file))
-		);
-
-		let totalLength = 0;
-		fileContents.forEach((content) => {
-			totalLength += content.length;
-		});
-
-		return totalLength / fileContents.length;
-	}
-
 	onOpen() {
-		const { contentEl } = this;
-		const files = this.app.vault.getMarkdownFiles();
-
-		for (let i = 0; i < files.length; i++) {
-			console.log(files[i].path);
-		}
+		let { contentEl } = this;
+		let { containerEl } = this;
+		const vaultPath = (this.app.vault.adapter as any).basePath;
+		let extractedKeywords: string[] = [];
 
 		contentEl.createEl("h1", { text: "Auto Link" });
-
-		new Setting(contentEl).addButton((btn: any) =>
-			btn
-				.setButtonText("Display all vault file size")
-				.setCta()
-				.onClick(async () => {
-					const fileLength = await this.averageFileLength();
-					new Notice(`The average file size : ${fileLength}!`);
-				})
-		);
 
 		new Setting(contentEl).addButton((btn: any) =>
 			btn
@@ -52,17 +28,54 @@ export class MainModal extends Modal {
 				.onClick(async () => {
 					const files = this.app.vault.getMarkdownFiles();
 					console.log(files);
-					const vaultPath = (this.app.vault.adapter as any).basePath;
+
 					console.log(vaultPath);
 					let filePath = [];
 					for (let i = 0; i < files.length; i++) {
 						filePath[i] = path.resolve(vaultPath, files[i].path);
 					}
 					const keywords = await extractKeywords(filePath);
-					for (let i = 0; i < keywords.length; i++) {
-						console.log(keywords[i]);
-					}
+					extractedKeywords = keywords;
 					new Notice(`Here are the keywords: ${keywords}!`);
+				})
+		);
+
+		// containerEl.createEl("h1", { text: "Heading 1" });
+		const book = containerEl.createEl("div");
+		book.createEl("div", { text: "How to Take Smart Notes" });
+		book.createEl("small", { text: "Sönke Ahrens" });
+
+		//Function which add <p></p> for each keywords found in the files
+		function addPtag(contentEl: HTMLElement, keywords: string[]) {
+			for (let i = 0; i < keywords.length; i++) {
+				const p = contentEl.createEl("p", {
+					text: `Keyword ${i} : ${keywords[i]}`,
+				});
+				contentEl.appendChild(p);
+			}
+		}
+		new Setting(contentEl).addButton((btn: any) =>
+			btn
+				.setButtonText("Add new p tag")
+				.setCta()
+				.onClick(() => {
+					// Create a new <p> element with content "Coucou"
+					const p = contentEl.createEl("p", {
+						text: "Coucou",
+					});
+					// Append the new <p> element to the modal's content
+					contentEl.appendChild(p);
+				})
+		);
+
+		new Setting(contentEl).addButton((btn: any) =>
+			btn
+				.setButtonText("Test")
+				.setCta()
+				.onClick(async () => {
+					const files = ["file1.md", "file2.md", "file3.md"];
+					const commonWords = await extractKeywords(files);
+					await addDoubleBrackets(files, commonWords);
 				})
 		);
 
