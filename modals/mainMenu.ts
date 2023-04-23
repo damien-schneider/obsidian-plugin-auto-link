@@ -24,27 +24,9 @@ export class MainModal extends Modal {
 		contentEl.createEl("br", {});
 		contentEl.createEl("h2", { text: "Parameters :" });
 
-		new Setting(contentEl).addButton((btn: any) =>
-			btn
-				.setButtonText("Display keyword list")
-				.setCta()
-				.onClick(async () => {
-					const files = this.app.vault.getMarkdownFiles();
-					console.log(files);
-
-					console.log(vaultPath);
-					let filePath = [];
-					for (let i = 0; i < files.length; i++) {
-						filePath[i] = path.resolve(vaultPath, files[i].path);
-					}
-
-					const keywords = await extractKeywords(filePath);
-					new Notice(`Here are the keywords: ${keywords}!`);
-				})
-		);
-
 		// Add a div to make the slider take all the width
-		let sliderValue = 3;
+		let minKeywordSliderValue = 3;
+		let maxKeywordSliderValue = 10;
 		// TODO : Make the slider taking the all width
 		new Setting(contentEl)
 			.setName(
@@ -54,10 +36,25 @@ export class MainModal extends Modal {
 				slider
 					.setLimits(1, 10, 1)
 					.setDynamicTooltip()
-					.setValue(sliderValue)
+					.setValue(minKeywordSliderValue)
 					.onChange(async (value: any) => {
 						new Notice(`The slider value is ${value}`);
-						sliderValue = value;
+						minKeywordSliderValue = value;
+					})
+			);
+		//TODO : Limit conflict to not allow min > max
+		new Setting(contentEl)
+			.setName(
+				`Keywords maximum occurence to be displayed in the list : `
+			)
+			.addSlider((slider: any) =>
+				slider
+					.setLimits(1, 100, 1)
+					.setDynamicTooltip()
+					.setValue(maxKeywordSliderValue)
+					.onChange(async (value: any) => {
+						new Notice(`The slider value is ${value}`);
+						maxKeywordSliderValue = value;
 					})
 			);
 
@@ -78,7 +75,7 @@ export class MainModal extends Modal {
 				.setButtonText("Start Vault Analysis")
 				.setCta()
 				.onClick(async () => {
-					new Notice(`${sliderValue}`);
+					new Notice(`${minKeywordSliderValue}`);
 					new Notice("Starting Vault Analysis");
 
 					// Get the list of all the files in the vault
@@ -91,10 +88,27 @@ export class MainModal extends Modal {
 						[word: string]: { count: number; paths: string[] };
 					} = {};
 					extractedKeywords = await extractKeywords(filePaths);
+					console.log("extractedKeywords : ", extractedKeywords);
+					// Filter the keywords to only keep the ones with a count higher than the minKeywordSliderValue and lower than the maxKeywordSliderValue
+					const filteredKeywords = Object.fromEntries(
+						Object.entries(extractedKeywords).filter(
+							([_, value]) =>
+								value.count >= minKeywordSliderValue &&
+								value.count <= maxKeywordSliderValue
+						)
+					);
+					console.log("filteredKeywords : ", filteredKeywords);
+
+					//TODO : Prendre en compte dans la fonction le minKeywordSliderValue pour optimiser le temps de traitement
 
 					// Display the results
 					contentEl.append(
 						contentEl.createEl("h1", { text: "Results" })
+					);
+					contentEl.append(
+						contentEl.createEl("h2", {
+							text: `Voici les résultats avec ${minKeywordSliderValue} occurences minimum et ${maxKeywordSliderValue} occurences maximum : `,
+						})
 					);
 					//TODO : Remove all the "any" types
 					// Add a master checkbox to toggle all keyword checkboxes
@@ -113,7 +127,7 @@ export class MainModal extends Modal {
 						});
 
 					// Get the array of keyword keys
-					const keywordKeys = Object.keys(extractedKeywords);
+					const keywordKeys = Object.keys(filteredKeywords);
 
 					// Iterate through the keyword keys array and add checkboxes with the corresponding keywords
 					for (let i = 0; i < keywordKeys.length; i++) {
