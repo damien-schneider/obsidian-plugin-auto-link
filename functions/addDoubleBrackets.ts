@@ -1,5 +1,7 @@
 import * as fs from "fs-extra";
 
+//TODO : Check if the word doesn't already have double brackets
+
 export async function addDoubleBrackets(
 	files: string[],
 	words: string[]
