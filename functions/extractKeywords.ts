@@ -2,21 +2,27 @@ import * as fs from "fs/promises";
 import { removeStopwords, eng, fra } from "stopword";
 import { Notice } from "obsidian";
 
-async function getWordsFromFile(path: string): Promise<string[]> {
-	const content = await fs.readFile(path, "utf-8");
+// Read files and return an array of filtered words
+async function getWordsFromFile(filePath: string): Promise<string[]> {
+	const content = await fs.readFile(filePath, "utf-8");
 	const words = content
 		.replace(/[^a-zA-Z\s]/g, "")
 		.toLowerCase()
 		.split(/\s+/);
+	console.log("La variable words : ", words);
 	const filteredWords = removeStopwords(words, [...eng, ...fra]);
+	console.log("La variable words without stopwords : ", filteredWords);
 	return filteredWords;
 }
-
-export async function extractKeywords(filePaths: string[]): Promise<string[]> {
+// Extract keywords from files of every files
+// Return an object with the keywords and their count and the filepaths of the files where the words are found
+export async function extractKeywords(
+	filePaths: string[]
+): Promise<{ [word: string]: { count: number; paths: string[] } }> {
 	new Notice("Start finding keywords");
-	const commonWords: string[] = [];
 	const fileWordCounts: { [file: string]: { [word: string]: number } } = {};
 
+	//For each file, get the words and count occurences
 	for (const filePath of filePaths) {
 		const words = await getWordsFromFile(filePath);
 		fileWordCounts[filePath] = {};
@@ -30,22 +36,27 @@ export async function extractKeywords(filePaths: string[]): Promise<string[]> {
 		}
 	}
 
-	const wordCounts: { [word: string]: number } = {};
+	const keywords: { [word: string]: { count: number; paths: string[] } } = {};
+	// For each word in each file, add the word to the keywords object, or increment the count if the word already exists and add the path to the paths array
 	for (const file in fileWordCounts) {
 		for (const word in fileWordCounts[file]) {
-			if (wordCounts[word]) {
-				wordCounts[word]++;
+			if (keywords[word]) {
+				keywords[word].count += fileWordCounts[file][word];
+				if (!keywords[word].paths.includes(file)) {
+					keywords[word].paths.push(file);
+				}
 			} else {
-				wordCounts[word] = 1;
+				keywords[word] = {
+					count: fileWordCounts[file][word],
+					paths: [file],
+				};
 			}
 		}
 	}
-
-	for (const word in wordCounts) {
-		if (wordCounts[word] > 1 && !commonWords.includes(word)) {
-			commonWords.push(word);
-		}
+	//Remove the first element of keywords if it's an empty strings
+	if (keywords[""]) {
+		delete keywords[""];
 	}
-	console.log(commonWords);
-	return commonWords;
+	console.log(keywords);
+	return keywords;
 }
