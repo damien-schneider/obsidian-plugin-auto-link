@@ -12,6 +12,7 @@
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
+		"@types/fs-extra": "^11.0.1",
 		"@types/node": "^16.11.6",
 		"@typescript-eslint/eslint-plugin": "5.29.0",
 		"@typescript-eslint/parser": "5.29.0",
@@ -26,6 +27,7 @@
 		"@types/marked": "^4.0.8",
 		"@types/natural": "^5.1.2",
 		"@types/stopword": "^2.0.0",
+		"fs-extra": "^11.1.1",
 		"jsdom": "^21.1.1",
 		"marked": "^4.3.0",
 		"natural": "^6.2.0",
