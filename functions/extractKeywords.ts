@@ -1,5 +1,6 @@
 import * as fs from "fs/promises";
 import { removeStopwords, eng, fra } from "stopword";
+import { Notice } from "obsidian";
 
 async function getWordsFromFile(path: string): Promise<string[]> {
 	const content = await fs.readFile(path, "utf-8");
@@ -11,14 +12,27 @@ async function getWordsFromFile(path: string): Promise<string[]> {
 	return filteredWords;
 }
 
-export async function extractKeywords(files: string[]): Promise<string[]> {
+export async function extractKeywords(filePaths: string[]): Promise<string[]> {
+	new Notice("Start finding keywords");
 	const commonWords: string[] = [];
-	const wordCounts: { [word: string]: number } = {};
+	const fileWordCounts: { [file: string]: { [word: string]: number } } = {};
 
-	for (const file of files) {
-		const words = await getWordsFromFile(file);
+	for (const filePath of filePaths) {
+		const words = await getWordsFromFile(filePath);
+		fileWordCounts[filePath] = {};
 
 		for (const word of words) {
+			if (fileWordCounts[filePath][word]) {
+				fileWordCounts[filePath][word]++;
+			} else {
+				fileWordCounts[filePath][word] = 1;
+			}
+		}
+	}
+
+	const wordCounts: { [word: string]: number } = {};
+	for (const file in fileWordCounts) {
+		for (const word in fileWordCounts[file]) {
 			if (wordCounts[word]) {
 				wordCounts[word]++;
 			} else {
@@ -32,6 +46,6 @@ export async function extractKeywords(files: string[]): Promise<string[]> {
 			commonWords.push(word);
 		}
 	}
-
+	console.log(commonWords);
 	return commonWords;
 }
