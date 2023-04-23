@@ -1,5 +1,5 @@
 import { App, Modal, Setting, Notice, DataAdapter } from "obsidian";
-import { extractKeywords } from "../functions/keywordFinder.js";
+import { extractKeywords } from "../functions/extractKeywords.js";
 import * as path from "path";
 export class MainModal extends Modal {
 	result: string;
@@ -50,10 +50,18 @@ export class MainModal extends Modal {
 				.setButtonText("Display keyword list")
 				.setCta()
 				.onClick(async () => {
+					const files = this.app.vault.getMarkdownFiles();
+					console.log(files);
 					const vaultPath = (this.app.vault.adapter as any).basePath;
-					const relativePath = files[12].path;
-					const filePath = path.resolve(vaultPath, relativePath);
+					console.log(vaultPath);
+					let filePath = [];
+					for (let i = 0; i < files.length; i++) {
+						filePath[i] = path.resolve(vaultPath, files[i].path);
+					}
 					const keywords = await extractKeywords(filePath);
+					for (let i = 0; i < keywords.length; i++) {
+						console.log(keywords[i]);
+					}
 					new Notice(`Here are the keywords: ${keywords}!`);
 				})
 		);
