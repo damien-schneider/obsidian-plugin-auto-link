@@ -27,36 +27,67 @@ export class MainModal extends Modal {
 		// Add a div to make the slider take all the width
 		let minKeywordSliderValue = 3;
 		let maxKeywordSliderValue = 10;
+		let numberOfLettersInKeyword = 3;
+		let minSlider: any;
+		let maxSlider: any;
+
 		// TODO : Make the slider taking the all width
-		new Setting(contentEl)
-			.setName(
-				`Keywords minimum occurence to be displayed in the list : `
-			)
-			.addSlider((slider: any) =>
-				slider
-					.setLimits(1, 10, 1)
-					.setDynamicTooltip()
-					.setValue(minKeywordSliderValue)
-					.onChange(async (value: any) => {
-						new Notice(`The slider value is ${value}`);
-						minKeywordSliderValue = value;
-					})
-			);
-		//TODO : Limit conflict to not allow min > max
-		new Setting(contentEl)
-			.setName(
-				`Keywords maximum occurence to be displayed in the list : `
-			)
-			.addSlider((slider: any) =>
-				slider
-					.setLimits(1, 100, 1)
-					.setDynamicTooltip()
-					.setValue(maxKeywordSliderValue)
-					.onChange(async (value: any) => {
-						new Notice(`The slider value is ${value}`);
-						maxKeywordSliderValue = value;
-					})
-			);
+
+		const sliderContainer = contentEl.createDiv();
+		const sliderLabel1 = sliderContainer.createEl("span", {
+			text: `Don't count words with less than ${numberOfLettersInKeyword} letters: `,
+		});
+
+		new Setting(sliderContainer).addSlider((slider: any) =>
+			slider
+				.setLimits(1, 10, 1)
+				.setDynamicTooltip()
+				.setValue(numberOfLettersInKeyword)
+				.onChange(async (value: any) => {
+					numberOfLettersInKeyword = value;
+					sliderLabel1.textContent = `Don't count words with less than ${numberOfLettersInKeyword} letters: `;
+				})
+		);
+		const sliderLabel2 = sliderContainer.createEl("span", {
+			text: `${minKeywordSliderValue} minimum occurences of a word to be counted as a keyword`,
+		});
+
+		new Setting(sliderContainer).addSlider((slider: any) => {
+			minSlider = slider;
+			return slider
+				.setLimits(1, 10, 1)
+				.setDynamicTooltip()
+				.setValue(minKeywordSliderValue)
+				.onChange(async (value: any) => {
+					minKeywordSliderValue = value;
+					if (minKeywordSliderValue >= maxKeywordSliderValue) {
+						maxKeywordSliderValue = minKeywordSliderValue + 1;
+						maxSlider.setValue(maxKeywordSliderValue);
+						sliderLabel3.textContent = `${maxKeywordSliderValue} maximum occurences of a word to be counted as a keyword`;
+					}
+					sliderLabel2.textContent = `${minKeywordSliderValue} minimum occurences of a word to be counted as a keyword`;
+				});
+		});
+		const sliderLabel3 = sliderContainer.createEl("span", {
+			text: `${maxKeywordSliderValue} maximum occurences of a word to be counted as a keyword`,
+		});
+
+		new Setting(sliderContainer).addSlider((slider: any) => {
+			maxSlider = slider;
+			return slider
+				.setLimits(1, 10, 1)
+				.setDynamicTooltip()
+				.setValue(maxKeywordSliderValue)
+				.onChange(async (value: any) => {
+					maxKeywordSliderValue = value;
+					if (maxKeywordSliderValue <= minKeywordSliderValue) {
+						minKeywordSliderValue = maxKeywordSliderValue - 1;
+						minSlider.setValue(minKeywordSliderValue);
+						sliderLabel2.textContent = `${minKeywordSliderValue} minimum occurences of a word to be counted as a keyword`;
+					}
+					sliderLabel3.textContent = `${maxKeywordSliderValue} maximum occurences of a word to be counted as a keyword`;
+				});
+		});
 
 		//Fucnction to check if the checkbox with the name "Option 1" is checked (return true or false)
 		//TODO : Find a better way to see what is checked
