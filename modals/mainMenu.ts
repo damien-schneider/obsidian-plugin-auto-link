@@ -2,7 +2,7 @@ import { App, Modal, Setting, Notice, DataAdapter } from "obsidian";
 import { extractKeywords } from "../functions/extractKeywords";
 import * as path from "path";
 import { addDoubleBrackets } from "../functions/addDoubleBrackets";
-
+import { popUpResults } from "./popUpResults";
 export class MainModal extends Modal {
 	result: string;
 	onSubmit: (result: string) => void;
@@ -23,6 +23,17 @@ export class MainModal extends Modal {
 		});
 		contentEl.createEl("br", {});
 		contentEl.createEl("h2", { text: "Parameters :" });
+
+		//TODO Make a loading popup that is automatically closed when it's finished
+		new Setting(contentEl).addButton((button: any) =>
+			button.setButtonText("Open Popup").onClick(() => {
+				// Instantiate the new modal
+				const popupModal = new popUpResults(this.app);
+
+				// Open the new modal
+				popupModal.open();
+			})
+		);
 
 		// Add a div to make the slider take all the width
 		let minKeywordSliderValue = 3;
