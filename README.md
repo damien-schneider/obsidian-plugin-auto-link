@@ -23,7 +23,7 @@ Quick starting guide for new plugin devs:
 -   Run `yarn dev` to compile your plugin from `main.ts` to `main.js` everytime you save a file.
 -   Reload Obsidian to load the new version of your plugin (Only if you don't have set up the Hot Reload plugin which will be your best friend honestly).
 -   Unofficial documentation for Obsidian developers: [Documentation](https://marcus.se.net/obsidian-plugin-docs/)
--       Feel free to use [Gitmoji](https://gitmoji.dev/) to commit your changes and a better readability the commits.
+-   Feel free to use [Gitmoji](https://gitmoji.dev/) to commit your changes and a better readability the commits.
 
 # Releases
 
