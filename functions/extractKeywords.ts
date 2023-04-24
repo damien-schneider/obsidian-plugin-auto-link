@@ -9,9 +9,7 @@ async function getWordsFromFile(filePath: string): Promise<string[]> {
 		.replace(/[^a-zA-Z\s]/g, "")
 		.toLowerCase()
 		.split(/\s+/);
-	console.log("La variable words : ", words);
 	const filteredWords = removeStopwords(words, [...eng, ...fra]);
-	console.log("La variable words without stopwords : ", filteredWords);
 	return filteredWords;
 }
 // Extract keywords from files of every files
