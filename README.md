@@ -1,92 +1,30 @@
-# Auto Link plugin
+# Automatic keyword link finder plugin
 
-This is a sample plugin for Obsidian from (https://obsidian.md).
+This plugin has been created with the sample plugin for Obsidian from [Obsidian.md](https://obsidian.md).
 The starter template is from [Obsidian sample Plugin Repository](https://github.com/obsidianmd/obsidian-sample-plugin).
-This is an Open-Source project, so feel free to contribute.
+This is an Open-Source project, feel free to contribute.
 
-This project uses Typescript to provide type checking and documentation.
+This project uses Typescript to provide type checking and documentation for a better development experience.
 
-## First time developing plugins?
+# Roadmap
+
+1.  Soon updated.
+2.  Soon updated.
+3.  Soon updated.
+
+## How to contribute
 
 Quick starting guide for new plugin devs:
 
--   Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
--   Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
--   Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
--   Install NodeJS, then run `npm i` in the command line under your repo folder.
--   Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
--   Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
--   Reload Obsidian to load the new version of your plugin.
--   Enable plugin in settings window.
--   For updates to the Obsidian API run `npm update` in the command line under your repo folder.
-
-## Releasing new releases
-
--   Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
--   Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
--   Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
--   Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
--   Publish the release.
-
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
-
-## Adding your plugin to the community plugin list
-
--   Check https://github.com/obsidianmd/obsidian-releases/blob/master/plugin-review.md
--   Publish an initial version.
--   Make sure you have a `README.md` file in the root of your repo.
--   Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
-
-## How to use
-
--   Clone this repo.
--   `npm i` or `yarn` to install dependencies
--   `npm run dev` to start compilation in watch mode.
-
-## Manually installing the plugin
-
--   Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
-
-## Improve code quality with eslint (optional)
-
--   [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code.
--   To use eslint with this project, make sure to install eslint from terminal:
-    -   `npm install -g eslint`
--   To use eslint to analyze this project use this command:
-    -   `eslint main.ts`
-    -   eslint will then create a report with suggestions for code improvement by file and line number.
--   If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-    -   `eslint .\src\`
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-	"fundingUrl": "https://buymeacoffee.com"
-}
-```
-
-If you have multiple URLs, you can also do:
-
-```json
-{
-	"fundingUrl": {
-		"Buy Me a Coffee": "https://buymeacoffee.com",
-		"GitHub Sponsor": "https://github.com/sponsors",
-		"Patreon": "https://www.patreon.com/"
-	}
-}
-```
+-   Clone this repo to a local development folder by executing `git clone https://github.com/damien-schneider/obsidian-plugin-auto-link.git`
+-   For convenience, you can clone this obsidian-plugin-auto-link in your `.obsidian/plugins/` folder where you set up your developpement vault (A copy of a Vault).
+-   Recommended -> Activate in your developpement vault the plugin [Hot Reload](https://github.com/pjeby/hot-reload) to automatically reload your plugin when you save your changes.
+-   Install NodeJS, then run `yarn` to install all the packages.
+-   Run `yarn dev` to compile your plugin from `main.ts` to `main.js` everytime you save a file.
+-   Reload Obsidian to load the new version of your plugin (Only if you don't have set up the Hot Reload plugin which will be your best friend honestly).
+-   Unofficial documentation for Obsidian developers: [Documentation](https://marcus.se.net/obsidian-plugin-docs/)
+-       Feel free to use [Gitmoji](https://gitmoji.dev/) to commit your changes and a better readability the commits.
 
 # Releases
 
-0.0.1 - Initial release
-
--   Copy the starter plugin.
--   Add a menu to start the Vault Analysis.
--   Clean the workspace.
+0.0.1 - In development
