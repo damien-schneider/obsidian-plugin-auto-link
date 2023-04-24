@@ -3,7 +3,7 @@
 	"name": "Automatic keyword link finder",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "This plugin create automatically links to other notes in your vault. It has a few options to configure the behavior. Enjoy !",
+	"description": "This plugin create automatically links to other notes in your vault. It has a few options to configure the behavior. It automatically check the frequency of the words in your notes to suggest you to link some keywords. Enjoy !",
 	"author": "Obsidian",
 	"authorUrl": "https://damien-schneider.art",
 	"fundingUrl": "https://obsidian.md/pricing",
