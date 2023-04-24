@@ -1,6 +1,6 @@
 {
-	"id": "obsidian-auto-link",
-	"name": "Auto Link",
+	"id": "obsidian-automatic-keyword-link-finder",
+	"name": "Automatic keyword link finder",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "This plugin create automatically links to other notes in your vault. It has a few options to configure the behavior. Enjoy !",
