@@ -1,7 +1,7 @@
 import { App, Modal, Setting, Notice, DataAdapter } from "obsidian";
-import { extractKeywords } from "../functions/extractKeywords.js";
+import { extractKeywords } from "../functions/extractKeywords";
 import * as path from "path";
-import { addDoubleBrackets } from "../functions/addDoubleBrackets.js";
+import { addDoubleBrackets } from "../functions/addDoubleBrackets";
 
 export class MainModal extends Modal {
 	result: string;
@@ -66,11 +66,11 @@ export class MainModal extends Modal {
 			) as HTMLInputElement;
 			return checkbox.checked;
 		}
-
-		const centerWithDiv = contentEl.createEl("div", {
+		//TODO : Sepparate this settings action into different function.ts scripts for more maintenance
+		const centerAnalysisButtonWithDiv = contentEl.createEl("div", {
 			attr: { style: "display: flex; justify-content: center;" },
 		});
-		new Setting(centerWithDiv).addButton((btn: any) =>
+		new Setting(centerAnalysisButtonWithDiv).addButton((btn: any) =>
 			btn
 				.setButtonText("Start Vault Analysis")
 				.setCta()
@@ -80,7 +80,7 @@ export class MainModal extends Modal {
 
 					// Get the list of all the files in the vault
 					const files = this.app.vault.getMarkdownFiles();
-					let filePaths = [];
+					let filePaths: string[] = [];
 					for (let i = 0; i < files.length; i++) {
 						filePaths[i] = path.resolve(vaultPath, files[i].path);
 					}
@@ -105,18 +105,42 @@ export class MainModal extends Modal {
 					contentEl.append(
 						contentEl.createEl("h1", { text: "Results" })
 					);
-					contentEl.append(
-						contentEl.createEl("h2", {
-							text: `Voici les résultats avec ${minKeywordSliderValue} occurences minimum et ${maxKeywordSliderValue} occurences maximum : `,
-						})
+					const centerAddLinksButtonWithDiv = contentEl.createEl(
+						"div",
+						{
+							attr: {
+								style: "display: flex; justify-content: center;",
+							},
+						}
 					);
-					//TODO : Remove all the "any" types
-					// Add a master checkbox to toggle all keyword checkboxes
-					const toggleRefs: any = [];
-					const selectedKeywords: any = {};
+					new Setting(centerAddLinksButtonWithDiv).addButton(
+						(btn: any) =>
+							btn
+								.setButtonText(
+									"Add links to the select keywords"
+								)
+								.setCta()
+								.onClick(async () => {
+									const { result, numberOfAddedLinks } =
+										await addDoubleBrackets(
+											getSelectedKeywords(),
+											filePaths
+										);
+									if (Object.keys(result)) {
+										console.log(
+											`${numberOfAddedLinks} new links have been added in your vault`
+										);
+									} else {
+										console.log(
+											"An error occurred while adding double brackets."
+										);
+									}
+								})
+					);
 
+					const toggleRefs: any = [];
 					new Setting(contentEl)
-						.setName("Toggle all keywords")
+						.setName("Select all keywords")
 						.addToggle((masterToggle) => {
 							masterToggle.onChange((checked) => {
 								toggleRefs.forEach((toggleObj: any) => {
@@ -126,8 +150,17 @@ export class MainModal extends Modal {
 							});
 						});
 
+					//TODO : Remove all the "any" types
+					// Add a master checkbox to toggle all keyword checkboxes
+					const selectedKeywords: any = {};
+
 					// Get the array of keyword keys
 					const keywordKeys = Object.keys(filteredKeywords);
+					contentEl.append(
+						contentEl.createEl("h2", {
+							text: `${keywordKeys.length} Keywords have been found in your vault`,
+						})
+					);
 
 					// Iterate through the keyword keys array and add checkboxes with the corresponding keywords
 					for (let i = 0; i < keywordKeys.length; i++) {
@@ -139,9 +172,6 @@ export class MainModal extends Modal {
 							.addToggle((toggle) => {
 								const onChangeFn = (checked: any) => {
 									selectedKeywords[keyword] = checked;
-									console.log(
-										`Selected keywords: ${getSelectedKeywords()}`
-									);
 								};
 
 								toggle.onChange(onChangeFn);
