@@ -1,30 +1,43 @@
-# Automatic keyword link finder plugin
+# Automatic Keyword Link Finder Plugin
 
-This plugin has been created with the sample plugin for Obsidian from [Obsidian.md](https://obsidian.md).
-The starter template is from [Obsidian sample Plugin Repository](https://github.com/obsidianmd/obsidian-sample-plugin).
-This is an Open-Source project, feel free to contribute.
+## Table of Contents
 
-This project uses Typescript to provide type checking and documentation for a better development experience.
+- [Roadmap](#roadmap)
+- [How to Contribute](#how-to-contribute)
+- [Releases](#releases)
 
-# Roadmap
+---
 
-1.  Soon updated.
-2.  Soon updated.
-3.  Soon updated.
+This plugin was created based on the sample plugin for Obsidian from [Obsidian.md](https://obsidian.md). The starter template is sourced from the [Obsidian Sample Plugin Repository](https://github.com/obsidianmd/obsidian-sample-plugin). This is an open-source project, and contributions are welcome.
 
-## How to contribute
+This project utilizes TypeScript to provide type checking and documentation for an enhanced development experience.
 
-Quick starting guide for new plugin devs:
+## Roadmap
 
--   Clone this repo to a local development folder by executing `git clone https://github.com/damien-schneider/obsidian-plugin-auto-link.git`
--   For convenience, you can clone this obsidian-plugin-auto-link in your `.obsidian/plugins/` folder where you set up your developpement vault (A copy of a Vault).
--   Recommended -> Activate in your developpement vault the plugin [Hot Reload](https://github.com/pjeby/hot-reload) to automatically reload your plugin when you save your changes.
--   Install NodeJS, then run `yarn` to install all the packages.
--   Run `yarn dev` to compile your plugin from `main.ts` to `main.js` everytime you save a file.
--   Reload Obsidian to load the new version of your plugin (Only if you don't have set up the Hot Reload plugin which will be your best friend honestly).
--   Unofficial documentation for Obsidian developers: [Documentation](https://marcus.se.net/obsidian-plugin-docs/)
--   Feel free to use [Gitmoji](https://gitmoji.dev/) to commit your changes and a better readability the commits.
+1. Improve the keyword selection algorithm by removing words without meanings (with an option to enable or disable this feature).
+2. Add an undo function to remove the links that have just been added.
+3. Enhance the keyword algorithm to accept sequences of words, not just individual words.
+4. Improve the keyword algorithm to link words with the same meaning but in different forms (e.g., verbs with different conjugations linked to the same destination).
+5. Add language selection in the general settings of the extension (English and French by default).
 
-# Releases
+## How to Contribute
+
+### Get started
+Here's a quick start guide for new plugin developers:
+
+- Clone this repository to a local development folder by executing `git clone https://github.com/damien-schneider/obsidian-plugin-auto-link.git`.
+- For convenience, you can clone this `obsidian-plugin-auto-link` into your `.obsidian/plugins/` folder, where you have set up your development vault (a copy of a vault).
+- It is recommended to activate the [Hot Reload](https://github.com/pjeby/hot-reload) plugin in your development vault to automatically reload your plugin when you save changes.
+- Install Node.js, then run `yarn` to install all the required packages.
+- Run `yarn dev` to compile your plugin from `main.ts` to `main.js` every time you save a file.
+- Reload Obsidian to load the new version of your plugin (only if you haven't set up the Hot Reload plugin, which is highly recommended for convenience).
+
+### Useful Ressources
+- Unofficial documentation for Obsidian developers: [Documentation](https://marcus.se.net/obsidian-plugin-docs/).
+- Feel free to use [Gitmoji](https://gitmoji.dev/) to commit your changes for better readability of the commits.
+
+---
+
+## Releases
 
 0.0.1 - In development
