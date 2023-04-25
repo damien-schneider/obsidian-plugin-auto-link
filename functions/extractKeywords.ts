@@ -6,7 +6,7 @@ import { Notice } from "obsidian";
 async function getWordsFromFile(filePath: string): Promise<string[]> {
 	const content = await fs.readFile(filePath, "utf-8");
 	const words = content
-		.replace(/[^a-zA-Z\s]/g, "")
+		.replace(/[^a-zA-Z\u00C0-\u017F\s]+/g, "")
 		.toLowerCase()
 		.split(/\s+/);
 	const filteredWords = removeStopwords(words, [...eng, ...fra]);
