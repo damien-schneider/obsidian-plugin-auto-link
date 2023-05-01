@@ -19,6 +19,7 @@ This project utilizes TypeScript to provide type checking and documentation for 
 3. Enhance the keyword algorithm to accept sequences of words, not just individual words.
 4. Improve the keyword algorithm to link words with the same meaning but in different forms (e.g., verbs with different conjugations linked to the same destination).
 5. Add language selection in the general settings of the extension (English and French by default).
+6. Add the possibility to remove a specific link from every notes. (with an input and a button "remove all links [[keyword]]")
 
 ## How to Contribute
 
