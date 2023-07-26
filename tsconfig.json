@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "strictPropertyInitialization": false,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
     "baseUrl": ".",
     "inlineSourceMap": true,
     "inlineSources": true,
