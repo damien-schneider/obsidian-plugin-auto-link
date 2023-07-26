@@ -1,4 +1,12 @@
-import { App, Modal, Setting, Notice, DataAdapter } from "obsidian";
+import {
+	App,
+	Modal,
+	Setting,
+	Notice,
+	DataAdapter,
+	SliderComponent,
+	ToggleComponent,
+} from "obsidian";
 import { extractKeywords } from "../functions/extractKeywords";
 import * as path from "path";
 import { addDoubleBrackets } from "../functions/addDoubleBrackets";
@@ -15,7 +23,7 @@ export class MainModal extends Modal {
 	onOpen() {
 		let { contentEl } = this;
 
-		const vaultPath = (this.app.vault.adapter as any).basePath;
+		const vaultPath: string = (this.app.vault.adapter as any).basePath;
 
 		contentEl.createEl("h1", {
 			text: "Auto Link",
@@ -25,22 +33,20 @@ export class MainModal extends Modal {
 		contentEl.createEl("h2", { text: "Parameters :" });
 
 		//TODO Make a loading popup that is automatically closed when it's finished
-		new Setting(contentEl).addButton((button: any) =>
+		new Setting(contentEl).addButton((button) =>
 			button.setButtonText("Open Popup").onClick(() => {
 				// Instantiate the new modal
 				const popupModal = new popUpResults(this.app);
-
 				// Open the new modal
 				popupModal.open();
 			})
 		);
 
-		// Add a div to make the slider take all the width
 		let minKeywordSliderValue = 3;
 		let maxKeywordSliderValue = 10;
 		let numberOfLettersInKeyword = 3;
-		let minSlider: any;
-		let maxSlider: any;
+		let minSlider: SliderComponent;
+		let maxSlider: SliderComponent;
 
 		// TODO : Make the slider taking the all width
 
@@ -49,12 +55,12 @@ export class MainModal extends Modal {
 			text: `Don't count words with less than ${numberOfLettersInKeyword} letters: `,
 		});
 
-		new Setting(sliderContainer).addSlider((slider: any) =>
+		new Setting(sliderContainer).addSlider((slider) =>
 			slider
 				.setLimits(1, 10, 1)
 				.setDynamicTooltip()
 				.setValue(numberOfLettersInKeyword)
-				.onChange(async (value: any) => {
+				.onChange(async (value) => {
 					numberOfLettersInKeyword = value;
 					sliderLabel1.textContent = `Don't count words with less than ${numberOfLettersInKeyword} letters: `;
 				})
@@ -63,13 +69,13 @@ export class MainModal extends Modal {
 			text: `${minKeywordSliderValue} minimum occurences of a word to be counted as a keyword`,
 		});
 
-		new Setting(sliderContainer).addSlider((slider: any) => {
+		new Setting(sliderContainer).addSlider((slider) => {
 			minSlider = slider;
 			return slider
 				.setLimits(1, 10, 1)
 				.setDynamicTooltip()
 				.setValue(minKeywordSliderValue)
-				.onChange(async (value: any) => {
+				.onChange(async (value) => {
 					minKeywordSliderValue = value;
 					if (minKeywordSliderValue >= maxKeywordSliderValue) {
 						maxKeywordSliderValue = minKeywordSliderValue + 1;
@@ -83,13 +89,13 @@ export class MainModal extends Modal {
 			text: `${maxKeywordSliderValue} maximum occurences of a word to be counted as a keyword`,
 		});
 
-		new Setting(sliderContainer).addSlider((slider: any) => {
+		new Setting(sliderContainer).addSlider((slider) => {
 			maxSlider = slider;
 			return slider
 				.setLimits(1, 10, 1)
 				.setDynamicTooltip()
 				.setValue(maxKeywordSliderValue)
-				.onChange(async (value: any) => {
+				.onChange(async (value) => {
 					maxKeywordSliderValue = value;
 					if (maxKeywordSliderValue <= minKeywordSliderValue) {
 						minKeywordSliderValue = maxKeywordSliderValue - 1;
@@ -100,19 +106,11 @@ export class MainModal extends Modal {
 				});
 		});
 
-		//Fucnction to check if the checkbox with the name "Option 1" is checked (return true or false)
-		//TODO : Find a better way to see what is checked
-		function isChecked(name: string) {
-			const checkbox = document.querySelector(
-				`input[name='${name}']`
-			) as HTMLInputElement;
-			return checkbox.checked;
-		}
 		//TODO : Sepparate this settings action into different function.ts scripts for more maintenance
 		const centerAnalysisButtonWithDiv = contentEl.createEl("div", {
 			attr: { style: "display: flex; justify-content: center;" },
 		});
-		new Setting(centerAnalysisButtonWithDiv).addButton((btn: any) =>
+		new Setting(centerAnalysisButtonWithDiv).addButton((btn) =>
 			btn
 				.setButtonText("Start Vault Analysis")
 				.setCta()
@@ -130,7 +128,6 @@ export class MainModal extends Modal {
 						[word: string]: { count: number; paths: string[] };
 					} = {};
 					extractedKeywords = await extractKeywords(filePaths);
-					console.log("extractedKeywords : ", extractedKeywords);
 					// Filter the keywords to only keep the ones with a count higher than the minKeywordSliderValue and lower than the maxKeywordSliderValue
 					const filteredKeywords = Object.fromEntries(
 						Object.entries(extractedKeywords).filter(
@@ -139,7 +136,6 @@ export class MainModal extends Modal {
 								value.count <= maxKeywordSliderValue
 						)
 					);
-					console.log("filteredKeywords : ", filteredKeywords);
 
 					//TODO : Prendre en compte dans la fonction le minKeywordSliderValue pour optimiser le temps de traitement
 
@@ -155,46 +151,50 @@ export class MainModal extends Modal {
 							},
 						}
 					);
-					new Setting(centerAddLinksButtonWithDiv).addButton(
-						(btn: any) =>
-							btn
-								.setButtonText(
-									"Add links to the select keywords"
-								)
-								.setCta()
-								.onClick(async () => {
-									const { result, numberOfAddedLinks } =
-										await addDoubleBrackets(
-											getSelectedKeywords(),
-											filePaths
-										);
-									if (Object.keys(result)) {
-										console.log(
-											`${numberOfAddedLinks} new links have been added in your vault`
-										);
-									} else {
-										console.log(
-											"An error occurred while adding double brackets."
-										);
-									}
-								})
+					new Setting(centerAddLinksButtonWithDiv).addButton((btn) =>
+						btn
+							.setButtonText("Add links to the select keywords")
+							.setCta()
+							.onClick(async () => {
+								const { result, numberOfAddedLinks } =
+									await addDoubleBrackets(
+										getSelectedKeywords(),
+										filePaths
+									);
+								if (Object.keys(result)) {
+									console.log(
+										`${numberOfAddedLinks} new links have been added in your vault`
+									);
+								} else {
+									console.log(
+										"An error occurred while adding double brackets."
+									);
+								}
+							})
 					);
+					// Create interface for toggleRefs
+					interface toggleRefs {
+						toggle: ToggleComponent;
+						onChangeFn: (checked: boolean) => void;
+					}
 
-					const toggleRefs: any = [];
+					const toggleRefs: toggleRefs[] = [];
 					new Setting(contentEl)
 						.setName("Select all keywords")
 						.addToggle((masterToggle) => {
 							masterToggle.onChange((checked) => {
-								toggleRefs.forEach((toggleObj: any) => {
+								toggleRefs.forEach((toggleObj) => {
 									toggleObj.toggle.setValue(checked);
 									toggleObj.onChangeFn(checked);
 								});
 							});
 						});
 
-					//TODO : Remove all the "any" types
 					// Add a master checkbox to toggle all keyword checkboxes
-					const selectedKeywords: any = {};
+					interface selectedKeywords {
+						[keyword: string]: boolean;
+					}
+					const selectedKeywords: selectedKeywords = {};
 
 					// Get the array of keyword keys
 					const keywordKeys = Object.keys(filteredKeywords);
@@ -208,11 +208,12 @@ export class MainModal extends Modal {
 					for (let i = 0; i < keywordKeys.length; i++) {
 						const keyword = keywordKeys[i];
 						selectedKeywords[keyword] = false;
+						console.log("SELECTED KEYWORDS : ", selectedKeywords);
 
 						new Setting(contentEl)
 							.setName(keyword)
 							.addToggle((toggle) => {
-								const onChangeFn = (checked: any) => {
+								const onChangeFn = (checked: boolean) => {
 									selectedKeywords[keyword] = checked;
 								};
 

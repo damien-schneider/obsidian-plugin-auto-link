@@ -10,7 +10,7 @@ export async function extractKeywords(filePath: string): Promise<string[]> {
 		const fileContent = await readFile(filePath, "utf-8");
 		const keywords = getKeywordsFromMarkdown(fileContent);
 		return keywords;
-	} catch (error) {
+	} catch (error: any) {
 		console.log("Voici le chemin d'erreur", filePath);
 		console.error(`Error reading file: ${error.message}`);
 		return [];
